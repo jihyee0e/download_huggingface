@@ -9,12 +9,12 @@ to a model that can be loaded without re-downloading.
 
 Example:
     >>> from download_model import download_model
-    >>> path = download_model("gemma-3-270m")
+    >>> path = download_model("gemma")
     >>> print(path)
 
 The script can also be used directly from the command line::
 
-    python3 download_model.py 
+    python3 download_model.py
 
 If authentication is required, place your Hugging Face token in
 ``hf_token.txt`` (this directory or the repository root) or set the
@@ -26,6 +26,10 @@ import argparse
 import os
 from pathlib import Path
 from typing import Optional
+import time
+
+os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+
 
 # Mapping of shorthand names to Hugging Face repositories.
 MODEL_REPOS = {
@@ -96,7 +100,8 @@ def download_model(model: str, base_dir: Optional[os.PathLike[str]] = None) -> P
 
     # 이미 다운로드된 모델이 있는지 확인
     if _is_model_downloaded(target_dir):
-        print(f"모델 '{model}'이 이미 다운로드되어 있습니다: {target_dir}")
+        # print(f"모델 '{model}'이 이미 다운로드되어 있습니다: {target_dir}")
+        print(f"모델 '{model}'이 이미 다운로드되어 있습니다.")
         return target_dir
 
     try:
@@ -113,17 +118,37 @@ def download_model(model: str, base_dir: Optional[os.PathLike[str]] = None) -> P
         snapshot_download(
             repo_id=repo_id,
             local_dir=target_dir,
-            local_dir_use_symlinks=False,  # 기존 동작 유지
+            local_dir_use_symlinks=False,  
             token=token,
+            resume_download=True,  # 중간에 끊겼을 때 이어받기
+            max_workers=4,  # 병렬 워커 줄여서 메모리/FD 폭주 방지
+            # allow_patterns=["*.safetensors", "pytorch_model*.bin", "config.json", "tokenizer.*"], # 필요할 때만
         )
         print(f"모델 '{model}' 다운로드 완료: {target_dir}")
     except Exception as e:
-        print(f"모델 '{model}' 다운로드 실패: {e}")
-        print("가능한 해결 방법:")
-        print("1. 인터넷 연결 확인")
-        print("2. Hugging Face 토큰 설정 확인 (hf_token.txt 파일 또는 HF_TOKEN 환경변수)")
-        print("3. 모델 이름 및 라이선스 동의 여부 확인")
-        raise
+        # print(f"모델 '{model}' 다운로드 실패: {e}")
+        # print("가능한 해결 방법:")
+        # print("1. 인터넷 연결 확인")
+        # print("2. Hugging Face 토큰 설정 확인 (hf_token.txt 파일 또는 HF_TOKEN 환경변수)")
+        # print("3. 모델 이름 및 라이선스 동의 여부 확인")
+        # raise
+        for attempt in range(3):
+            try:
+                snapshot_download(
+                    repo_id=repo_id,
+                    local_dir=target_dir,
+                    local_dir_use_symlinks=False,
+                    token=token,
+                    resume_download=True,
+                    max_workers=4,
+                )
+                break
+            except Exception as e:
+                if attempt < 2:
+                    print(f"실패, {2**attempt}초 후 재시도...")
+                    time.sleep(2**attempt)
+                else:
+                    raise
 
     return target_dir
 
@@ -142,7 +167,7 @@ def _cli() -> None:
     )
     parser.add_argument(
         "--model",
-        help="Model name or Hugging Face repo_id (e.g., 'gemma-3-270m' or 'google/gemma-3-270m').",
+        help="Model shorthand (e.g., 'gemma', 'llama-7b') or full Hugging Face repo_id (e.g., 'google/gemma-2b').",
     )
     parser.add_argument(
         "--base-dir",
