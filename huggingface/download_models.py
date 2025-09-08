@@ -40,9 +40,7 @@ MODEL_REPOS = {
     "llama": "meta-llama/Meta-Llama-3-8B",
     "llama-7b": "meta-llama/Llama-2-7b-hf",
     "gpt-oss-120b": "openai/gpt-oss-120b",
-    "openai/gpt-oss-120b": "openai/gpt-oss-120b",
     "gpt-oss-20b": "openai/gpt-oss-20b",
-    "openai/gpt-oss-20b": "openai/gpt-oss-20b",
     "qwen": "Qwen/Qwen-7B",
 }
 
