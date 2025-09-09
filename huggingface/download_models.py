@@ -3,9 +3,14 @@
 
 This module provides a helper function ``download_model`` that fetches
 models from the Hugging Face Hub and stores them locally under the
-``/mnt/hdd1/jihye0e/aicar-preprocessing/huggingface/llm_models`` directory by default.
+``<script_dir>/llm_models`` directory by default.
 Other applications can import this module and call ``download_model`` to obtain a local path
 to a model that can be loaded without re-downloading.
+
+**경로 설정 안내:**
+- 기본 저장 경로: 스크립트 위치 기준 ``llm_models`` 디렉토리
+- 사용자별 환경에 맞게 ``base_dir`` 파라미터로 변경 가능
+- 토큰 파일: ``hf_token.txt`` 또는 ``HF_TOKEN`` 환경변수 사용
 
 Example:
     >>> from download_model import download_model
@@ -49,9 +54,12 @@ def _read_hf_token() -> Optional[str]:
     token = os.getenv("HF_TOKEN")
     if token:
         return token.strip()
+    # 토큰 파일 경로 설정 (사용자별 환경에 맞게 수정 필요)
+    # 1. 스크립트와 같은 디렉토리: /mnt/hdd1/jihye0e/huggingface/huggingface/hf_token.txt
+    # 2. 프로젝트 루트 디렉토리: /mnt/hdd1/jihye0e/huggingface/hf_token.txt
     token_paths = [
-        Path(__file__).resolve().parent / "hf_token.txt",
-        Path(__file__).resolve().parents[2] / "hf_token.txt",
+        Path(__file__).resolve().parent / "hf_token.txt",  # 스크립트 위치 기준
+        Path(__file__).resolve().parents[2] / "hf_token.txt",  # 프로젝트 루트 기준
     ]
     for path in token_paths:
         if path.is_file():
@@ -88,10 +96,15 @@ def download_model(model: str, base_dir: Optional[os.PathLike[str]] = None) -> P
     # 모델명 정규화: google/gemma-3-270m -> gemma-3-270m
     model_name = repo_id.split('/')[-1] if '/' in repo_id else model
     
+    # 기본 저장 경로 설정
+    # 사용자별 환경에 맞게 수정 필요:
+    # - 현재: /mnt/hdd1/jihye0e/huggingface/huggingface/llm_models
+    # - 개인 환경: ~/models 또는 원하는 경로로 변경
+    # - 서버 환경: 충분한 디스크 공간이 있는 경로로 설정
     base = (
         Path(base_dir)
         if base_dir is not None
-        else Path(__file__).resolve().parent / "llm_models"
+        else Path(__file__).resolve().parent / "llm_models"  # 스크립트 위치 기준 상대 경로
     )
     target_dir = base / model_name
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -124,12 +137,6 @@ def download_model(model: str, base_dir: Optional[os.PathLike[str]] = None) -> P
         )
         print(f"모델 '{model}' 다운로드 완료: {target_dir}")
     except Exception as e:
-        # print(f"모델 '{model}' 다운로드 실패: {e}")
-        # print("가능한 해결 방법:")
-        # print("1. 인터넷 연결 확인")
-        # print("2. Hugging Face 토큰 설정 확인 (hf_token.txt 파일 또는 HF_TOKEN 환경변수)")
-        # print("3. 모델 이름 및 라이선스 동의 여부 확인")
-        # raise
         for attempt in range(3):
             try:
                 snapshot_download(
