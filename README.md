@@ -10,6 +10,15 @@ Hugging Face Hub에서 LLM 모델을 다운로드하고 로컬에서 관리하�
 - **토큰 관리**: Hugging Face 인증 토큰 자동 처리
 - **다양한 모델 지원**: Gemma, Llama, GPT-OSS, Qwen 등 주요 모델 지원
 
+
+### 경로 설정 
+
+**⚠️ 중요**: 로컬 시스템에서 사용할 때는 다음 경로들을 사용자 환경에 맞게 수정 필요:
+
+- **모델 저장 경로**: 코드 내 기본 경로를 충분한 디스크 공간이 있는 경로로 변경
+- **토큰 파일 경로**: `hf_token.txt` 파일 위치를 사용자 환경에 맞게 조정
+- **스크립트 경로**: `download_models.py` 실행 시 경로를 사용자 환경에 맞게 수정
+
 ### 1. 토큰 설정
 ```bash
 pip install -r requirements.txt
@@ -29,7 +38,7 @@ echo "your_hf_token_here" > hf_token.txt
 export HF_TOKEN="your_hf_token_here"
 ```
 
-### 2. 모델 다운로드
+### 3. 모델 다운로드
 ```bash
 # 특정 모델 다운로드
 python3 huggingface/download_models.py --model gemma
@@ -52,6 +61,20 @@ python3 huggingface/download_models.py --list-models
 | `gpt-oss-20b` | `openai/gpt-oss-20b` | OpenAI GPT-OSS 20B 모델 |
 | `qwen` | `Qwen/Qwen-7B` | Qwen 7B 모델 |
 
+## 프로젝트 구조
+
+```
+huggingface/
+├── huggingface/
+│   ├── download_models.py    # 메인 다운로드 스크립트
+│   ├── hf_token.txt         # Hugging Face 토큰
+│   └── llm_models/          # 다운로드된 모델 저장소
+│       ├── gemma-3-270m/
+│       ├── gpt-oss-20b/
+│       └── ...
+├── requirements.txt         # Python 의존성
+└── README.md               # 이 파일
+```
 
 ## 주요 특징
 
