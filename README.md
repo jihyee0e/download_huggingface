@@ -40,7 +40,7 @@ export HF_TOKEN="your_hf_token_here"
 
 #### 게이트된 모델 접근 권한 확인
 
-![Hugging Face 게이트된 모델 접근 권한 상태](https://github.com/user-attachments/assets/55d8209c-f510-40c9-9ec6-ae33a2833aaf)
+![Hugging Face 게이트된 모델 접근 권한 상태](https://github.com/user-attachments/assets/e0305dfa-a11e-45fe-8cca-9dbd77dbea44)
 
 *Llama, Gemma 등 게이트된 모델을 다운로드하기 전에 Hugging Face에서 접근 권한을 요청하고 승인받아야 합니다*
 
