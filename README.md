@@ -38,6 +38,12 @@ echo "your_hf_token_here" > hf_token.txt
 export HF_TOKEN="your_hf_token_here"
 ```
 
+#### 게이트된 모델 접근 권한 확인
+
+![Hugging Face 게이트된 모델 접근 권한 상태](https://github.com/user-attachments/assets/55d8209c-f510-40c9-9ec6-ae33a2833aaf)
+
+*Llama, Gemma 등 게이트된 모델을 다운로드하기 전에 Hugging Face에서 접근 권한을 요청하고 승인받아야 합니다*
+
 ### 3. 모델 다운로드
 ```bash
 # 특정 모델 다운로드
@@ -46,6 +52,12 @@ python3 huggingface/download_models.py --model gemma
 # 지원되는 모델 목록 확인
 python3 huggingface/download_models.py --list-models
 ```
+
+#### 다운로드 실행 예시
+
+![모델 다운로드 실행 화면](https://github.com/user-attachments/assets/7f71569c-7d7c-479c-8cca-d0eab34a6c04)
+
+*이미 다운로드된 모델은 재다운로드하지 않습니다*
 
 ## 지원 모델
 
