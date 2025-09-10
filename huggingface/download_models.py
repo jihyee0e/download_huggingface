@@ -55,8 +55,6 @@ def _read_hf_token() -> Optional[str]:
     if token:
         return token.strip()
     # 토큰 파일 경로 설정 (사용자별 환경에 맞게 수정 필요)
-    # 1. 스크립트와 같은 디렉토리: /mnt/hdd1/jihye0e/huggingface/huggingface/hf_token.txt
-    # 2. 프로젝트 루트 디렉토리: /mnt/hdd1/jihye0e/huggingface/hf_token.txt
     token_paths = [
         Path(__file__).resolve().parent / "hf_token.txt",  # 스크립트 위치 기준
         Path(__file__).resolve().parents[2] / "hf_token.txt",  # 프로젝트 루트 기준
@@ -98,7 +96,6 @@ def download_model(model: str, base_dir: Optional[os.PathLike[str]] = None) -> P
     
     # 기본 저장 경로 설정
     # 사용자별 환경에 맞게 수정 필요:
-    # - 현재: /mnt/hdd1/jihye0e/huggingface/huggingface/llm_models
     # - 개인 환경: ~/models 또는 원하는 경로로 변경
     # - 서버 환경: 충분한 디스크 공간이 있는 경로로 설정
     base = (
